@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Face Facts! – His, Her, Their</title>
+<style>
+:root{--ink:#2b1d5c;--deep:#170d3a;--gold:#ffc233;--coral:#ff6b5e;--teal:#12a58c;--paper:#fff8e7}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{height:100dvh;background:var(--deep)}
+body{margin:0;height:100%;display:flex;flex-direction:column;overflow:hidden;color:var(--ink);font:22px/1.45 Nunito,"Baloo 2","Trebuchet MS","Segoe UI",system-ui,sans-serif;touch-action:manipulation}
+button{font:inherit;color:inherit;border:0;touch-action:manipulation}
+header{flex:none;padding:calc(8px + env(safe-area-inset-top)) 16px 8px;background:var(--deep);color:#fff}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:34px;line-height:1.2;color:var(--gold);flex:1;font-family:Kalam,"Comic Sans MS","Chalkboard SE",cursive}
+#score{background:var(--gold);color:var(--ink);font-weight:900;border-radius:99px;padding:6px 18px}
+.all{min-height:60px;padding:0 20px;border-radius:14px;background:var(--coral);color:#fff;font-weight:800}
+nav{display:flex;gap:8px;margin-top:10px}
+nav button{flex:1;min-height:64px;border-radius:14px;background:#4b3a96;color:#fff;font-weight:800}
+nav .on{background:var(--gold);color:var(--ink)}
+nav .fin::after{content:" ✓"}
+main{flex:1;min-height:0;overflow-y:scroll;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding:0 14px calc(100px + env(safe-area-inset-bottom));background:var(--deep)}
+.page{position:relative;max-width:1040px;margin:8px auto 0;padding:18px 24px 28px 78px;border-radius:16px;background:linear-gradient(90deg,transparent 62px,#ff6b5e99 62px 64px,transparent 64px),repeating-linear-gradient(#fff8e7 0 33px,#dfe9f3 33px 35px);box-shadow:0 8px 0 #0006}
+.page[hidden]{display:none}
+.page::before{content:"";position:absolute;left:0;top:0;bottom:0;width:48px;background:radial-gradient(circle at 24px 24px,var(--deep) 0 8px,var(--gold) 9px 12px,transparent 13px) 0 0/48px 48px repeat-y}
+h2{margin:0 0 6px;font-size:32px;line-height:1.25;font-family:Kalam,"Comic Sans MS","Chalkboard SE",cursive}
+p{margin:6px 0}
+.tip{background:#e9fbf7;border:3px dashed var(--teal);border-radius:14px;padding:10px 16px;margin:10px 0}
+.chips span{display:inline-block;margin:3px;padding:2px 14px;border-radius:99px;background:var(--gold);font-weight:800}
+.q{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:12px 16px;margin:14px 0}
+.sent{margin:0 0 10px;font-size:30px;font-weight:800}
+.blank{display:inline-block;min-width:110px;text-align:center;border-bottom:4px solid var(--coral);color:var(--coral)}
+.blank.filled{color:var(--teal);border-color:var(--teal)}
+.opts{display:flex;gap:12px;flex-wrap:wrap}
+.opt,.card,.go{min-height:64px;border-radius:14px;border:3px solid var(--ink);background:#fff;font-weight:800;font-size:26px;padding:8px 24px}
+.opt{flex:1;min-width:120px}
+.opt.ok,.card.done{background:var(--teal);color:#fff;border-color:#0b6e5d}
+.opt.no,.card.no{background:var(--coral);color:#fff;border-color:#b6362b;animation:sh .4s}
+.opt:active,.card:active{transform:scale(.97)}
+.q[data-done] .opt:not(.ok){opacity:.4}
+.fb{min-height:34px;margin:8px 0 0;font-weight:800}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.col{display:flex;flex-direction:column;gap:14px}
+.card{width:100%;min-height:90px;font-size:24px;text-align:left;display:flex;align-items:center;justify-content:center}
+.card.sel{background:var(--gold);box-shadow:0 0 0 4px #fff,0 0 0 8px var(--ink)}
+.fc{display:flex;align-items:center;gap:12px}
+.result{font-size:30px;font-weight:900;color:var(--teal);margin:10px 0}
+.go{background:var(--ink);color:#fff;margin-top:8px}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@media(max-width:700px){.board{grid-template-columns:1fr}.page{padding-left:62px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><h1>Face Facts!</h1><span id="score">⭐ 0 / 10</span><button class="all" id="all">↻ Start over</button></div>
+  <nav><button data-tab="a1">1 · Choose</button><button data-tab="a2">2 · Who is who?</button><button data-tab="a3">3 · Same meaning</button></nav>
+</header>
+<main>
+  <section class="page" id="a1">
+    <h2>Activity 1: Choose the Word</h2>
+    <p>Tap the correct word to finish each sentence.</p>
+    <div class="tip"><b>Remember:</b> I → <u>my</u> · we → <u>our</u> · he → <u>his</u> · she → <u>her</u> · they → <u>their</u><br>
+      One thing → <b>is</b> (hair) · more than one → <b>are</b> (eyes) · he / she → <b>has</b> · I / we / they → <b>have</b>
+      <div class="chips"></div></div>
+    <div class="qs"></div>
+    <p class="result" hidden></p>
+    <button class="go" data-reset="a1">↻ Try again</button>
+  </section>
+
+  <section class="page" id="a2" hidden>
+    <h2>Activity 2: Who Is Who?</h2>
+    <p>Tap a description, then tap the matching face.</p>
+    <div class="board"></div>
+    <p class="fb" aria-live="polite"></p>
+    <p class="result" hidden></p>
+    <button class="go" data-reset="a2">↻ Try again</button>
+  </section>
+
+  <section class="page" id="a3" hidden>
+    <h2>Activity 3: Same Meaning</h2>
+    <p>Tap a sentence, then tap its partner. Example: <b>His hair is grey</b> = <b>He has grey hair</b>.</p>
+    <div class="board"></div>
+    <p class="fb" aria-live="polite"></p>
+    <p class="result" hidden></p>
+    <button class="go" data-reset="a3">↻ Try again</button>
+  </section>
+</main>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const MAX={a1:4,a2:3,a3:3},S={a1:0,a2:0,a3:0};
+
+function setScore(id,s,fin){
+  S[id]=s;
+  $('#score').textContent='⭐ '+(S.a1+S.a2+S.a3)+' / 10';
+  $('[data-tab='+id+']').classList.toggle('fin',!!fin);
+  const r=$('.result',$('#'+id));
+  r.hidden=!fin;
+  if(fin)r.textContent=(s===MAX[id]?'🎉 Perfect! ':'👏 Well done! ')+'⭐'.repeat(s)+'☆'.repeat(MAX[id]-s)+'  '+s+' / '+MAX[id];
+}
+function show(id){
+  $$('.page').forEach(p=>p.hidden=p.id!==id);
+  $$('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));
+  $('main').scrollTop=0;
+}
+
+/* ---------- Activity 1 ---------- */
+const Q=[
+  ['','hair is black.',['Her','He','They'],'Her','“Her” tells us who the hair belongs to.'],
+  ['Her eyes','brown.',['is','are','has'],'are','“Eyes” is more than one, so we say “are”.'],
+  ['He','green eyes.',['has','have','is'],'has','He and she go with “has”.'],
+  ['They','blue eyes.',['has','have','are'],'have','I, you, we and they go with “have”.']
+];
+function buildA1(){
+  $('#a1 .qs').innerHTML=Q.map(q=>'<div class="q"><p class="sent">'+(q[0]?q[0]+' ':'')+'<span class="blank">&nbsp;</span> '+q[1]+'</p><div class="opts">'+q[2].map(o=>'<button class="opt">'+o+'</button>').join('')+'</div><p class="fb" aria-live="polite"></p></div>').join('');
+  setScore('a1',0,false);
+}
+$('#a1 .qs').onclick=e=>{
+  const b=e.target.closest('.opt');if(!b)return;
+  const card=b.closest('.q'),q=Q[$$('.q',$('#a1')).indexOf(card)];
+  if(card.dataset.done||b.classList.contains('no'))return;
+  const fb=$('.fb',card);
+  if(b.textContent===q[3]){
+    card.dataset.done=1;b.classList.add('ok');
+    const bl=$('.blank',card);bl.textContent=q[3];bl.classList.add('filled');
+    fb.textContent='✅ Great! '+q[4];
+  }else{
+    card.dataset.miss=1;b.classList.add('no');
+    fb.textContent='🤔 Not quite – try another word!';
+  }
+  const ds=$$('.q[data-done]',$('#a1'));
+  setScore('a1',ds.filter(c=>!c.dataset.miss).length,ds.length===Q.length);
+};
+
+/* ---------- Faces for Activity 2 ---------- */
+function face(f){
+  const hair={black:'#241a2e',brown:'#8a5226'}[f.hair],eye={green:'#2fa05a',blue:'#2f80e8'}[f.eyes];
+  const n={big:13,mid:9}[f.nose],m={big:34,small:14}[f.mouth],e={big:18,mid:13,small:8}[f.ears];
+  return '<svg viewBox="0 0 120 124" width="104" height="108" aria-hidden="true">'
+    +'<circle cx="19" cy="64" r="'+e+'" fill="#f0a97d"/><circle cx="101" cy="64" r="'+e+'" fill="#f0a97d"/>'
+    +'<ellipse cx="60" cy="66" rx="41" ry="46" fill="#ffd3b0"/>'
+    +'<path d="M19 62C14 8 106 8 101 62C94 38 78 30 60 30C42 30 26 38 19 62Z" fill="'+hair+'"/>'
+    +'<circle cx="43" cy="58" r="9" fill="#fff"/><circle cx="77" cy="58" r="9" fill="#fff"/>'
+    +'<circle cx="43" cy="58" r="5.5" fill="'+eye+'"/><circle cx="77" cy="58" r="5.5" fill="'+eye+'"/>'
+    +'<ellipse cx="60" cy="79" rx="'+n*.7+'" ry="'+n+'" fill="#eb9a72"/>'
+    +'<path d="M'+(60-m/2)+' 98Q60 '+(98+m*.6)+' '+(60+m/2)+' 98Z" fill="#c0392b"/></svg>';
+}
+
+/* ---------- Generic tap-to-match board (Activities 2 & 3) ---------- */
+function matcher(id,L,R,hint){
+  const box=$('#'+id+' .board'),fb=$('.fb',$('#'+id));
+  const left=shuffle(L);let right;
+  do{right=shuffle(R)}while(right.every((x,i)=>x.id===left[i].id));
+  const col=(s,a)=>'<div class="col" data-s="'+s+'">'+a.map(x=>'<button class="card" data-id="'+x.id+'">'+x.h+'</button>').join('')+'</div>';
+  box.innerHTML=col('l',left)+col('r',right);
+  fb.textContent='';
+  const bad=new Set();let ok=0,pts=0;
+  setScore(id,0,false);
+  box.onclick=e=>{
+    const c=e.target.closest('.card');
+    if(!c||c.classList.contains('done')||c.classList.contains('no'))return;
+    const side=c.parentNode.dataset.s,old=$('.col[data-s='+side+'] .sel',box);
+    if(old)old.classList.remove('sel');
+    if(old===c)return;
+    c.classList.add('sel');
+    const l=$('.col[data-s=l] .sel',box),r=$('.col[data-s=r] .sel',box);
+    if(!l||!r)return;
+    if(l.dataset.id===r.dataset.id){
+      [l,r].forEach(x=>{x.classList.remove('sel');x.classList.add('done')});
+      ok++;if(!bad.has(l.dataset.id))pts++;
+      fb.textContent='✅ Yes! That is a match.';
+      setScore(id,pts,ok===L.length);
+    }else{
+      bad.add(l.dataset.id);
+      [l,r].forEach(x=>{x.classList.remove('sel');x.classList.add('no')});
+      fb.textContent='❌ Not a match. '+hint;
+      setTimeout(()=>[l,r].forEach(x=>x.classList.remove('no')),800);
+    }
+  };
+}
+
+/* ---------- Activity 2 ---------- */
+const C=[
+  {id:'happy',n:'Mr. Happy',f:{hair:'brown',eyes:'green',nose:'big',mouth:'big',ears:'mid'},d:'He has a big nose, a big mouth, brown hair and green eyes.'},
+  {id:'funny',n:'Mr. Funny',f:{hair:'black',eyes:'blue',nose:'mid',mouth:'small',ears:'small'},d:'He has black hair, blue eyes, a small mouth and small ears.'},
+  {id:'good',n:'Mr. Good',f:{hair:'black',eyes:'blue',nose:'mid',mouth:'small',ears:'big'},d:'He has black hair, blue eyes, a small mouth and big ears.'}
+];
+function buildA2(){
+  matcher('a2',C.map(c=>({id:c.id,h:c.d})),C.map(c=>({id:c.id,h:'<span class="fc">'+face(c.f)+'<b>'+c.n+'</b></span>'})),'Look at the hair, eyes, mouth and ears!');
+}
+
+/* ---------- Activity 3 ---------- */
+const P=[['His hair is brown.','He has brown hair.'],['Their eyes are green.','They have green eyes.'],['His hair is grey.','He has grey hair.']];
+function buildA3(){
+  matcher('a3',P.map((p,i)=>({id:'p'+i,h:p[0]})),P.map((p,i)=>({id:'p'+i,h:p[1]})),'Check the colour word and who it is about.');
+}
+
+/* ---------- Start-up ---------- */
+const BUILD={a1:buildA1,a2:buildA2,a3:buildA3};
+$('.chips').innerHTML='hair eyes nose mouth ears black brown green blue grey fair big small'.split(' ').map(w=>'<span>'+w+'</span>').join('');
+$$('[data-tab]').forEach(b=>b.onclick=()=>show(b.dataset.tab));
+$$('[data-reset]').forEach(b=>b.onclick=()=>BUILD[b.dataset.reset]());
+$('#all').onclick=()=>{Object.values(BUILD).forEach(f=>f());show('a1')};
+Object.values(BUILD).forEach(f=>f());
+show('a1');
+</script>
+</body>
+</html>
